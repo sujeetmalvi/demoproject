@@ -11,7 +11,7 @@
           <div class="col-sm-6">
             <h1>Users</h1>
           </div>
-          @if(Auth::user()->company_id==2)
+          @if(Auth::user()->role_id==2)
           <div class="col-sm-6">
             <form name="csv_upload" id="csv_upload" method='post' action='/importCsvUsers' enctype='multipart/form-data' >
                {{ csrf_field() }}
