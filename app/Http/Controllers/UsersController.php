@@ -10,6 +10,7 @@ use App\UsersBluetoothToken;
 use App\UsersHealth;
 use App\Company;
 use Config;
+use Log;
 
 class UsersController extends Controller
 {
@@ -70,7 +71,6 @@ class UsersController extends Controller
         $company_id = $request->company_id;
         $role_id = $request->role_id;
 
-
         $id = User::insertGetId([
             'name' => $name,
             'email' => $email,
@@ -101,26 +101,90 @@ class UsersController extends Controller
     }
 
 
+public function importCsvUsers(Request $request){
 
-    // public function usersinfectedreport(Request $request){
-    //     $company_id = Auth::user()->company_id;
-    //     $data = User::where('infected_reportedon','!=','')
-    //             ->select('name','infected_reportedon')
-    //             ->where('users.company_id',$company_id)
-    //             ->orderBy('infected_reportedon', 'DESC')
-    //             ->get();
-    //     return view('usersinfectedreport', ['data'=>$data]);
-    // }
+    if ($request->input('submit') != null  ){
 
-    // public function usershealthreport(Request $request){
-    //     $company_id = Auth::user()->company_id;
-    //     $data = UsersHealth::join('users','users.id','=','usershealth.user_id')
-    //             ->select('name','condition_type','usershealth.created_at')
-    //             ->where('users.company_id',$company_id)
-    //             ->orderBy('created_at', 'DESC')
-    //             ->get();
-    //     return view('usershealthreport', ['data'=>$data]);
-    // }
+      $file = $request->file('file');
+      $company_id = Auth::user()->company_id;
 
+      // File Details 
+      $filename = $file->getClientOriginalName();
+      $extension = $file->getClientOriginalExtension();
+      $tempPath = $file->getRealPath();
+      $fileSize = $file->getSize();
+      $mimeType = $file->getMimeType();
+      // Valid File Extensions
+      $valid_extension = array("csv");
+
+      // 2MB in Bytes
+      $maxFileSize = 2097152; 
+
+      // Check file extension
+      if(in_array(strtolower($extension),$valid_extension)){
+
+        // Check file size
+        if($fileSize <= $maxFileSize){
+
+          // File upload location
+          $location = 'uploads';
+
+          // Upload file
+          $file->move($location,$filename);
+
+          // Import CSV to Database
+          $filepath = public_path($location."/".$filename);
+
+          // Reading file
+          $file = fopen($filepath,"r");
+
+          $importData_arr = array();
+          $i = 0;
+
+          while (($filedata = fgetcsv($file, 1000, ",")) !== FALSE) {
+             $num = count($filedata );
+             
+             // Skip first row (Remove below comment if you want to skip the first row)
+             /*if($i == 0){
+                $i++;
+                continue; 
+             }*/
+             for ($c=0; $c < $num; $c++) {
+                $importData_arr[$i][] = $filedata [$c];
+             }
+             $i++;
+          }
+          fclose($file);    
+          $iData=0;
+          // Insert to MySQL database
+          foreach($importData_arr as $importData){
+            if($iData>0){ 
+                $insertData = array(
+                'name' => $importData[0],
+                'email' => $importData[1],
+                'password' => bcrypt($importData[2]),
+                'company_id' => $company_id,
+                'role_id' => '3',
+                'created_at'=> now()->setTimezone('UTC')
+                );
+                User::insertGetId($insertData);
+            }
+            $iData++;            
+          }
+
+          return response()->json(['status'=>true,'message' => 'File imported successfully']);
+        }else{
+          return response()->json(['status'=>false,'message' => 'File must be less than 2MB']);
+        }
+
+      }else{
+         return response()->json(['status'=>false,'message' => 'Invalid File Extension.']);
+      }
+
+    }
+
+    // Redirect to index
+    //return redirect()->action('UsersController@user');
+  }
 
 }

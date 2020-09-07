@@ -26,8 +26,11 @@ Route::get('login', [ 'as' => 'login', 'uses' => 'UsersController@login']);
 Route::group(['middleware' => 'auth'], function() {
 	Route::get('/dashboard', 'UsersController@dashboard');
 	Route::get('/userslocations', 'UsersController@userslocations');
+
 	Route::get('/users', 'UsersController@users');
 	Route::post('/create_user', 'UsersController@create_user');
+	Route::post('/importCsvUsers', 'UsersController@importCsvUsers');
+
 	Route::get('/company', 'CompanyController@company');
 	Route::post('/create_company', 'CompanyController@create_company');
 		

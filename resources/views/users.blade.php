@@ -11,12 +11,16 @@
           <div class="col-sm-6">
             <h1>Users</h1>
           </div>
-          <!-- <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">DataTables</li>
-            </ol>
-          </div> -->
+          @if(Auth::user()->company_id==2)
+          <div class="col-sm-6">
+            <form name="csv_upload" id="csv_upload" method='post' action='/importCsvUsers' enctype='multipart/form-data' >
+               {{ csrf_field() }}
+               <input class="" type='file' name='file' id="file" >
+               <input class="btn btn-sm btn-warning" type='submit' name='submit' value='Import'>
+             </form>
+             <a href="/format.csv" target="_blank">CSV Format</a>
+          </div>
+          @endif
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -73,7 +77,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <form action="/create_user" name="create_user" id="create_user" action="javascript:;" method="post">
+                <form action="/create_user" name="create_user" id="create_user" method="post">
                   {{ csrf_field() }}
                     <div class="form-group">
                       <label for="name">Name *</label>
@@ -257,6 +261,75 @@ $("#create_user").submit(function(event) {
   posting.fail(function() {
     $('#result').text('failed');
   });
+});
+
+  /* attach a submit handler to the form */
+$("#csv_upload").submit(function(event) {
+debugger;
+  /* stop form from submitting normally */
+  event.preventDefault();
+
+  /* get the action attribute from the <form action=""> element */
+  var $form = $(this),
+    url = $form.attr('action');
+
+  if(!$('#file')[0].files[0]){
+    $(document).Toasts('create', {
+      autohide: true,
+      class: 'bg-danger', 
+      title: 'No file selected',
+      subtitle: 'error',
+      body: "Please select file"
+    });
+    return false;
+  }
+
+  formdata = new FormData();
+  var files = $('#file')[0].files[0]; 
+  formdata.append('file', files); 
+  formdata.append('_token', $('input[name=_token]').val());
+  formdata.append('submit','submit'); 
+
+  $(document).Toasts('create', {
+            autohide: true,
+            class: 'bg-warning', 
+            title: 'CSV Import',
+            subtitle: 'processing',
+            body: 'Import data in process...'
+          });
+
+$.ajax({
+    url: url,
+    type: "POST",
+    data: formdata,
+    processData: false,
+    contentType: false,
+    success: function (result) {
+        $(document).Toasts('create', {
+            autohide: true,
+            class: 'bg-success', 
+            title: 'User created',
+            subtitle: 'Success',
+            body: 'CSV Imported Successfully.'
+          });
+        $('#csv_upload').trigger("reset");
+        },
+      error: function (jqXHR, exception) {
+        $(document).Toasts('create', {
+            autohide: true,
+            class: 'bg-danger', 
+            title: 'Error',
+            subtitle: 'error',
+            body: exception
+          });
+      }
+});
+
+
+  /* Send the data using post with element id name and name2*/
+
+  /* Alerts the results */
+
 });
 
 </script>
