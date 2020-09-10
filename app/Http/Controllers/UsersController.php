@@ -56,9 +56,12 @@ class UsersController extends Controller
     public function users(){
         $company_id = Auth::user()->company_id;
         $data = User::join('company','company.id','=','users.company_id')
-                ->select('users.id','users.name','users.email','company.company_name')
-                ->where('users.company_id',$company_id)
-                ->orderby('users.name')->get();
+                ->select('users.id','users.name','users.email','company.company_name');
+        if(Auth::user()->role_id!=1){
+          $data = $data->where('users.company_id',$company_id);
+        }
+
+        $data = $data->orderby('users.name')->get();
         $company = Company::select('id','company_name')->orderby('company_name')->get();
         return view('users',['data'=>$data,'company'=>$company]);
     }
@@ -81,7 +84,7 @@ class UsersController extends Controller
         ]);        
         if($id){
             
-            $this->sendEmail('BLE Account Creation', 'http://35.189.78.216/login',$email,$password, $email, $emailFrom = "");
+           // $this->sendEmail('BLE Account Creation', 'http://35.189.78.216/login',$email,$password, $email, $emailFrom = "");
 
             return response()->json(['status'=>true,'message' => 'New User Created Successfully']);
         }else{
