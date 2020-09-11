@@ -20,7 +20,7 @@ class ReportsController extends Controller
                 ->select('usersbluetoothtoken.bluetoothtoken',
                     'usersbluetoothtoken.distance','users.name','user2.name as user2name','usersbluetoothtoken.created_at')
                 ->where('users.company_id',$company_id)
-                ->orderBy('usersbluetoothtoken.id', 'DESC')
+                ->orderBy('usersbluetoothtoken.created_at', 'DESC')
                 ->get();
         return view('usersbtdistances', ['data'=>$data]);
     }
@@ -43,7 +43,7 @@ class ReportsController extends Controller
                 ->where('usersbluetoothtoken.user_id','=',$user_id)
                 ->where('users.company_id',$company_id)
                 ->select('usersbluetoothtoken.distance','users.name as user2name','usersbluetoothtoken.created_at')
-                ->orderBy('usersbluetoothtoken.id', 'DESC')
+                ->orderBy('usersbluetoothtoken.created_at', 'DESC')
                 ->get();
     // ->dd();
     // $sql = str_replace_array('?', $data->getBindings(), $data->toSql());
@@ -69,7 +69,7 @@ class ReportsController extends Controller
                 ->wherein('usersbluetoothtoken.user_id',[$data_lvl1->users_ids])
                 ->select('usersbluetoothtoken.distance','users.name as user2name','usersbluetoothtoken.created_at')
                 ->where('users.company_id',$company_id)
-                ->orderBy('usersbluetoothtoken.id', 'DESC')
+                ->orderBy('usersbluetoothtoken.created_at', 'DESC')
                 ->get();
       //             ->dd();
       // $sql = str_replace_array('?', $data->getBindings(), $data->toSql());
@@ -83,7 +83,7 @@ class ReportsController extends Controller
         $data = UsersHealth::leftjoin('users','users.id','=','usershealth.user_id')
                 ->where('users.company_id',$company_id)
                 ->select('users.name','usershealth.created_at','usershealth.condition_type')
-                ->orderBy('usershealth.id', 'DESC')
+                ->orderBy('usershealth.created_at', 'DESC')
                 ->get();
     // ->dd();
     // $sql = str_replace_array('?', $data->getBindings(), $data->toSql());
@@ -97,7 +97,7 @@ class ReportsController extends Controller
         $data = UsersBluetoothToken::leftjoin('users','users.id','=','usersbluetoothtoken.bluetoothtoken')
                 ->where('users.company_id',$company_id)
                 ->select('users.name',\DB::raw('count(usersbluetoothtoken.bluetoothtoken) as voilation'),\DB::raw('date_format(usersbluetoothtoken.created_at,"%d-%m-%Y") as ddate'),\DB::raw('date_format(usersbluetoothtoken.created_at,"%Y-%m-%d") as orderdate'))
-                ->orderBy('orderdate', 'DESC')
+                ->orderBy('usersbluetoothtoken.id', 'DESC')
                 ->groupBy(\DB::raw('ddate,usersbluetoothtoken.bluetoothtoken'))
                 ->having('voilation','>','2')
                 ->get();

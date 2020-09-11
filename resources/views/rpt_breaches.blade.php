@@ -71,7 +71,7 @@
       "autoWidth": false,
       "paging": true,
       "ordering": true,
-      "order": [[ 1, "desc" ]],
+    //  "order": [[ 1, "desc" ]],
     });
   });
 </script>
