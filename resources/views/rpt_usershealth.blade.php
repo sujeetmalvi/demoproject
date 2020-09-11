@@ -40,11 +40,12 @@
                   <tr>
                     <td>{{$d->name}}</td>
                     <td>{{Config::get('constants.CONDITION_TYPES.'.$d->condition_type)}}</td>
-                    <td>{{date('d-M-Y h:i A',strtotime($d->created_at))}}</td>
+                    <td>{{Carbon\Carbon::createFromTimeString($d->created_at, 'Asia/Kolkata')->format('d-M-Y h:i A')}}</td>
                   </tr>
                 @endforeach
                   </tbody>
                   <!--<tfoot>
+                  {{-- date ('d-M-Y h:i A',strtotime($d->created_at)) --}}
                   <tr>
                     <th>User Name</th>
                     <th>Latitude</th>
