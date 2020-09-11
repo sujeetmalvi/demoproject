@@ -40,7 +40,7 @@
                   <tr>
                     <td>{{$d->name}}</td>
                     <td>{{Config::get('constants.CONDITION_TYPES.'.$d->condition_type)}}</td>
-                    <td>{{Carbon\Carbon::createFromTimeString($d->created_at, 'Asia/Kolkata')->format('d-M-Y h:i A')}}</td>
+                    <td>{{Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $d->created_at, 'Asia/Kolkata')->format('d-M-Y h:i A')}}</td>
                   </tr>
                 @endforeach
                   </tbody>
