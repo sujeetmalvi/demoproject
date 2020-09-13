@@ -42,6 +42,8 @@
                   <tr>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Location</th>
                     <th>Company</th>
                     <th>Action</th>
                   </tr>
@@ -51,6 +53,8 @@
                   <tr>
                     <td>{{$d->name}}</td>
                     <td>{{$d->email}}</td>
+                    <td>{{$d->mobile}}</td>
+                    <td>{{$d->location}}</td>
                     <td>{{$d->company_name}}</td>
                     <td>
                       <!-- <a class="btn btn-info btn-sm edit" data-id="{{$d->id}}" href="#"><i class="fas fa-pencil-alt"></i></a>
@@ -84,10 +88,18 @@
                       <input type="text" id="name" name="name" class="form-control" value="" autocomplete="off" required="">
                     </div>
                     <div class="form-group">
-                      <label for="email">Email *</label>
-                      <input type="text" id="email" name="email" class="form-control" value="" autocomplete="off" required="">
+                      <div class="row">
+                          <div class="col-sm-6">
+                            <label for="email">Email *</label>
+                            <input type="text" id="email" name="email" class="form-control" value="" autocomplete="off" required="">
+                          </div>
+                          <div class="col-sm-6">
+                            <label for="mobile">Mobile *</label>
+                            <input type="text" id="mobile" name="mobile" class="form-control" value="" autocomplete="off" required="">
+                          </div>
+                      </div>
                     </div>
-                    
+                      
                     <div class="form-group">
                       <div class="row">
                         <div class="col-sm-6">
@@ -102,21 +114,29 @@
                     </div>
 
                     <div class="form-group">
-                      <label for="company_id">Company *</label>
-                      <select class="form-control custom-select" id="company_id" name="company_id" required="">
-                        <option selected disabled>Select one</option>
-                        @if(Auth::user()->role_id==1)
-                          @foreach($company as $comp)
-                            <option value="{{$comp->id}}">{{$comp->company_name}}</option>
-                          @endforeach
-                        @else
-                          @foreach($company as $comp)
-                            @if(Auth::user()->company_id==$comp->id)
-                              <option value="{{$comp->id}}" selected="selected">{{$comp->company_name}}</option>
-                            @endif
-                          @endforeach
-                        @endif  
-                      </select>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <label for="location">Location *</label>
+                          <input type="text" id="location" name="location" class="form-control" value="" autocomplete="off" required="">
+                        </div>
+                        <div class="col-sm-6">
+                          <label for="company_id">Company *</label>
+                          <select class="form-control custom-select" id="company_id" name="company_id" required="">
+                            <option selected disabled>Select one</option>
+                            @if(Auth::user()->role_id==1)
+                              @foreach($company as $comp)
+                                <option value="{{$comp->id}}">{{$comp->company_name}}</option>
+                              @endforeach
+                            @else
+                              @foreach($company as $comp)
+                                @if(Auth::user()->company_id==$comp->id)
+                                  <option value="{{$comp->id}}" selected="selected">{{$comp->company_name}}</option>
+                                @endif
+                              @endforeach
+                            @endif  
+                          </select>
+                        </div>
+                      </div>
                     </div>
 
                     <div class="form-group">
@@ -242,6 +262,8 @@ $("#create_user").submit(function(event) {
     _token:$('input[name=_token]').val(),
     name: $('#name').val(),
     email: $('#email').val(),
+    mobile: $('#mobile').val(),
+    location: $('#location').val(),
     password: $('#password').val(),
     company_id:$('#company_id').val(),
     role_id:$('#role_id').val()
