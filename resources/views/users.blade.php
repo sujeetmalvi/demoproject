@@ -94,8 +94,8 @@
                             <input type="text" id="email" name="email" class="form-control" value="" autocomplete="off" required="">
                           </div>
                           <div class="col-sm-6">
-                            <label for="mobile">Mobile *</label>
-                            <input type="text" id="mobile" name="mobile" class="form-control" value="" autocomplete="off" required="">
+                            <label for="mobile">Mobile </label>
+                            <input type="number" id="mobile" name="mobile" class="form-control" value="" autocomplete="off" required="">
                           </div>
                       </div>
                     </div>
@@ -116,7 +116,7 @@
                     <div class="form-group">
                       <div class="row">
                         <div class="col-sm-6">
-                          <label for="location">Location *</label>
+                          <label for="location">Location </label>
                           <input type="text" id="location" name="location" class="form-control" value="" autocomplete="off" required="">
                         </div>
                         <div class="col-sm-6">
