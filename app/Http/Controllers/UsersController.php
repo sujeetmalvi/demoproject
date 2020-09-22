@@ -56,7 +56,7 @@ class UsersController extends Controller
     public function users(){
         $company_id = Auth::user()->company_id;
         $data = User::join('company','company.id','=','users.company_id')
-                ->select('users.id','users.name','users.email','company.company_name');
+                ->select('users.id','users.name','users.email','company.company_name','users.mobile','users.location');
         if(Auth::user()->role_id!=1){
           $data = $data->where('users.company_id',$company_id);
         }
@@ -70,6 +70,8 @@ class UsersController extends Controller
 
         $name = $request->name;
         $email = $request->email;
+        $mobile = $request->mobile;
+        $location = $request->location;
         $password = $request->password;
         $company_id = $request->company_id;
         $role_id = $request->role_id;
@@ -77,6 +79,8 @@ class UsersController extends Controller
         $id = User::insertGetId([
             'name' => $name,
             'email' => $email,
+            'mobile' => $mobile,
+            'location' => $location,
             'password' => bcrypt($password),
             'company_id' => $company_id,
             'role_id' => $role_id,
@@ -90,7 +94,6 @@ class UsersController extends Controller
         }else{
             return response()->json(['status'=>false,'message' => 'Error']);
         }
-
     }
 
     public function userslocations(Request $request){
@@ -172,6 +175,7 @@ public function importCsvUsers(Request $request){
                 );
                 User::insertGetId($insertData);
             }
+            $this->sendEmail('BLE Account Creation', 'http://35.189.78.216/login',$importData[1],$importData[2], $importData[1], $emailFrom = "");
             $iData++;            
           }
 
