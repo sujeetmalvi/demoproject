@@ -33,7 +33,7 @@ class UsersController extends Controller
         }else{
             return view('login',['status'=>false,'message' => 'Invalid Credentials']);
         }
-    }
+    } 
 
     public function dashboard(){
         $data = UsersHealth::select('condition_type',\DB::raw('count(condition_type) as usercount'))
@@ -43,7 +43,7 @@ class UsersController extends Controller
                 //  ->dd();
                 //  $sql = str_replace_array('?', $data->getBindings(), $data->toSql());
                 // return dd($sql);   
-                $ddata_arr = array();
+                $ddata_arr = array('Infected'=>'0','Symptoms'=>'0','Well'=>'0','Not Infected'=>'0');
             foreach($data as $d){
                 $ddata_arr[Config::get('constants.CONDITION_TYPES.'.$d->condition_type)] = $d->usercount;
                 //$ddata_arr[$d->condition_type] = $d->usercount;
