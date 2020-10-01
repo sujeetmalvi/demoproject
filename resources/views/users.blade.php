@@ -60,7 +60,7 @@
                     <td>{{$d->company_name}}</td>
                     <td>
                       <a class="btn btn-info btn-sm edit" href="{{url('/users/edit_')}}{{$d->id}}"><i class="fas fa-pencil-alt"></i></a>
-                      <a class="btn btn-danger btn-sm delete" href="{{url('/users/delete_')}}{{$d->id}}"><i class="fas fa-trash"></i></a>
+                      <a class="btn btn-danger btn-sm delete" href="#" onclick="deleterecord({{$d->id}})"><i class="fas fa-trash"></i></a>
                     </td>
                   </tr>
                   @endforeach
@@ -287,6 +287,13 @@
      // "order": [[ 3, "desc" ]],
     });
   });
+
+  function deleterecord(id){
+    var r = confirm("Do you want to delete this record ?");
+    if (r == true) {
+      window.location.href = '/users/delete_'+id;
+    } 
+  }
 
   /* attach a submit handler to the form */
 $("#csv_upload").submit(function(event) {

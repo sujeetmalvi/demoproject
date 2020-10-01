@@ -39,7 +39,7 @@
                     <td>{{$d->company_name}}</td>
                     <td>
                       <a class="btn btn-info btn-sm edit" href="{{url('/company/edit_')}}{{$d->id}}"><i class="fas fa-pencil-alt"></i></a>
-                      <a class="btn btn-danger btn-sm delete" href="{{url('/company/delete_')}}{{$d->id}}"><i class="fas fa-trash"></i></a>
+                      <a class="btn btn-danger btn-sm delete" href="#" onclick="deleterecord({{$d->id}})"><i class="fas fa-trash"></i></a>
                     </td>
                   </tr>
                   @endforeach
@@ -123,32 +123,6 @@
   </div>
   <!-- /.content-wrapper -->
 
-
-<!--       <div class="modal fade" id="modal-sm">
-        <div class="modal-dialog modal-sm">
-          <div class="modal-content bg-danger">
-            <div class="modal-header">
-              <h4 class="modal-title">Delete</h4>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p>Do you want to delete this record ?</p>
-            </div>
-            <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <form action="/user/delete">
-              <button type="button" class="btn btn-primary">Save changes</button>
-              </form>
-            </div>
-          </div>
-          <!-- /.modal-content --
-        </div>
-        <!-- /.modal-dialog --
-      </div>
-      <!-- /.modal --> -->
-
 @if($view=='list')
   <script>
   $(function () {
@@ -161,8 +135,11 @@
     });
   });
 
-  function delete(id){
-
+  function deleterecord(id){
+    var r = confirm("Do you want to delete this record ?");
+    if (r == true) {
+      window.location.href = '/company/delete_'+id;
+    } 
   }
 
 
