@@ -147,7 +147,8 @@ class UsersController extends Controller
                 'role_id' => $role_id,
                 'updated_at'=> now()->setTimezone('UTC')
             ]); 
-          }else{
+          }
+        }else{
               $updated = User::where('id',$id)->update([
                 'name' => $name,
                 'email' => $email,
@@ -158,7 +159,6 @@ class UsersController extends Controller
                 'updated_at'=> now()->setTimezone('UTC')
             ]);
           }
-        }
 
        //$this->sendEmail('BLE Account Creation', url('/login'),$email,$password, $email, $emailFrom = "");
 
