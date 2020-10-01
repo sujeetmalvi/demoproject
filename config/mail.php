@@ -118,8 +118,8 @@ return [
 'from' => ['address' => config('tableConstants.MAIL_FROM', 'hello@example.com'), 'name' => config('tableConstants.MAIL_NAME', 'BLE')],
 'encryption' => config('tableConstants.MAIL_ENCRYPTION', 'ssl'),
 
-'username' => config('tableConstants.MAIL_USERNAME','ramdhakad386@gmail.com'),
-'password' => config('tableConstants.MAIL_PASSWORD','ramkumar'),
+'username' => config('tableConstants.MAIL_USERNAME',''),
+'password' => config('tableConstants.MAIL_PASSWORD',''),
 'sendmail' => '/usr/sbin/sendmail -bs',
      
 

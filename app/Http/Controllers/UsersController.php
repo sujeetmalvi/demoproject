@@ -89,6 +89,7 @@ class UsersController extends Controller
 
     public function create_user(Request $request){
 
+      try{
         $name = $request->name;
         $email = $request->email;
         $mobile = $request->mobile;
@@ -107,13 +108,17 @@ class UsersController extends Controller
             'role_id' => $role_id,
             'created_at'=> now()->setTimezone('UTC')
         ]);        
-        if($id){
-            
-        // $this->sendEmail('BLE Account Creation', 'http://35.189.78.216/login',$email,$password, $email, $emailFrom = "");
+  
+          $this->sendEmail('BLE Account Creation', url('/login'),$email,$password, $email, $emailFrom = "");
 
-            return response()->json(['status'=>true,'message' => 'New User Created Successfully']);
-        }else{
-            return response()->json(['status'=>false,'message' => 'Error']);
+          return response()->json(['status'=>true,'message' => 'New User Created Successfully']);
+
+        }catch(Exception $e){       
+          
+          Log::info($e->getMessage() . '' . $e->getLine());
+            
+          return response()->json(['status'=>false,'message' => $e->getMessage()]);
+        
         }
     }
 
@@ -123,24 +128,39 @@ class UsersController extends Controller
         $name = $request->name;
         $email = $request->email;
         $mobile = $request->mobile;
-        $location = $request->location;
+        $location = $request->location;        
         $password = $request->password;
         $company_id = $request->company_id;
         $role_id = $request->role_id;
         $id = $request->id;
 
-        $updated = User::where('id',$id)->update([
-            'name' => $name,
-            'email' => $email,
-            'mobile' => $mobile,
-            'location' => $location,
-            //'password' => bcrypt($password),
-            'company_id' => $company_id,
-            'role_id' => $role_id,
-            'updated_at'=> now()->setTimezone('UTC')
-        ]); 
+        if($request->oldpassword!=''){
+          $count = User::where('password',bcrypt($request->oldpassword))->where('id',$id)->count();
+          if($count>0){
+            $updated = User::where('id',$id)->update([
+                'name' => $name,
+                'email' => $email,
+                'mobile' => $mobile,
+                'location' => $location,
+                'password' => bcrypt($password),
+                'company_id' => $company_id,
+                'role_id' => $role_id,
+                'updated_at'=> now()->setTimezone('UTC')
+            ]); 
+          }else{
+              $updated = User::where('id',$id)->update([
+                'name' => $name,
+                'email' => $email,
+                'mobile' => $mobile,
+                'location' => $location,
+                'company_id' => $company_id,
+                'role_id' => $role_id,
+                'updated_at'=> now()->setTimezone('UTC')
+            ]);
+          }
+        }
 
-        // $this->sendEmail('BLE Account Creation', 'http://35.189.78.216/login',$email,$password, $email, $emailFrom = "");
+       //$this->sendEmail('BLE Account Creation', url('/login'),$email,$password, $email, $emailFrom = "");
 
            return response()->json(['status'=>true,'message' => 'User updated Successfully']);
 
