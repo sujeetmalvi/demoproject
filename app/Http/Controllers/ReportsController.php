@@ -25,6 +25,22 @@ class ReportsController extends Controller
         return view('usersbtdistances', ['data'=>$data]);
     }
 
+    public function exl_usersbtdistances(){
+        $company_id = Auth::user()->company_id;
+        $data = UsersBluetoothToken::leftjoin('users','users.id','=','usersbluetoothtoken.user_id')
+                ->leftjoin('users as user2','user2.id','=','usersbluetoothtoken.bluetoothtoken')
+                ->where('usersbluetoothtoken.distance','<=',2)
+                ->select('usersbluetoothtoken.bluetoothtoken',
+                    'usersbluetoothtoken.distance','users.name','user2.name as user2name','usersbluetoothtoken.created_at')
+                ->where('users.company_id',$company_id)
+                ->orderBy('usersbluetoothtoken.created_at', 'DESC')
+                ->get();
+        return view('excel_reports.usersbtdistances', ['data'=>$data]);
+    }
+
+
+
+
     public function rpt_active_cases(){
         $company_id = Auth::user()->company_id;
         $data = User::join('usershealth','usershealth.user_id','=','users.id') 
@@ -91,6 +107,16 @@ class ReportsController extends Controller
         return view('rpt_usershealth',['data'=>$data]);
     }
 
+    public function exl_usershealth(){
+        $company_id = Auth::user()->company_id;
+        $data = UsersHealth::leftjoin('users','users.id','=','usershealth.user_id')
+                ->where('users.company_id',$company_id)
+                ->select('users.name','usershealth.created_at','usershealth.condition_type')
+                ->orderBy('usershealth.created_at', 'DESC')
+                ->get();
+        return view('excel_reports.usershealth', ['data'=>$data]);
+    }
+
 
     public function rpt_defaulters(){
         $company_id = Auth::user()->company_id;
@@ -107,6 +133,22 @@ class ReportsController extends Controller
         return view('rpt_defaulters',['data'=>$data]);
     }
 
+    public function exl_defaulters(){
+        $company_id = Auth::user()->company_id;
+        $data = UsersBluetoothToken::leftjoin('users','users.id','=','usersbluetoothtoken.bluetoothtoken')
+                ->where('users.company_id',$company_id)
+                ->select('users.name',\DB::raw('count(usersbluetoothtoken.bluetoothtoken) as voilation'),\DB::raw('date_format(usersbluetoothtoken.created_at,"%d-%m-%Y") as ddate'),\DB::raw('date_format(usersbluetoothtoken.created_at,"%Y-%m-%d") as orderdate'))
+                ->orderBy('usersbluetoothtoken.id', 'DESC')
+                ->groupBy(\DB::raw('ddate,usersbluetoothtoken.bluetoothtoken'))
+                ->having('voilation','>','2')
+                ->get();
+        return view('excel_reports.defaulters', ['data'=>$data]);
+    }
+
+
+
+
+
     public function rpt_breaches(){
         $company_id = Auth::user()->company_id;
         $data = UsersBluetoothToken::leftjoin('users','users.id','=','usersbluetoothtoken.bluetoothtoken')
@@ -119,6 +161,17 @@ class ReportsController extends Controller
     // $sql = str_replace_array('?', $data->getBindings(), $data->toSql());
     // return dd($sql);    
         return view('rpt_breaches',['data'=>$data]);
+    }
+
+    public function exl_breaches(){
+        $company_id = Auth::user()->company_id;
+        $data = UsersBluetoothToken::leftjoin('users','users.id','=','usersbluetoothtoken.bluetoothtoken')
+                ->where('users.company_id',$company_id)
+                ->select('users.name',\DB::raw('count(usersbluetoothtoken.bluetoothtoken) as voilation'))
+                ->orderBy('usersbluetoothtoken.id', 'DESC')
+                ->groupBy(\DB::raw('usersbluetoothtoken.bluetoothtoken'))
+                ->get();
+        return view('excel_reports.breaches', ['data'=>$data]);
     }
 
 

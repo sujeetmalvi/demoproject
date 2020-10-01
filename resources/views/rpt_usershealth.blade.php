@@ -22,9 +22,9 @@
         <div class="row">
           <div class="col-12">
             <div class="card">
-              <!-- <div class="card-header">
-                <h3 class="card-title">User Locations</h3>
-              </div> -->
+              <div class="card-header">
+                <a href="/exl_usershealth"><h3 style="float: right" class="card-title">Excel Export </h3></a>
+              </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <table id="example2" class="table table-bordered table-hover">

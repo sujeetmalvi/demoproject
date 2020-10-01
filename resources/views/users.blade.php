@@ -28,12 +28,14 @@
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
+
+        @if($view=='list')
         <div class="row" id="list">
           <div class="col-12">
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Users List </h3>
-                <button class="btn btn-sm btn-success" style="float:right;" id='add'><i class="fas fa-plus"></i> New</button>
+                <a href="{{url('/users/new')}}" class="btn btn-sm btn-success" style="float:right;" id='add'><i class="fas fa-plus"></i> New</a>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -57,8 +59,8 @@
                     <td>{{$d->location}}</td>
                     <td>{{$d->company_name}}</td>
                     <td>
-                      <!-- <a class="btn btn-info btn-sm edit" data-id="{{$d->id}}" href="#"><i class="fas fa-pencil-alt"></i></a>
-                      <a class="btn btn-danger btn-sm delete" data-id="{{$d->id}}" href=""><i class="fas fa-trash"></i></a> -->
+                      <a class="btn btn-info btn-sm edit" href="{{url('/users/edit_')}}{{$d->id}}"><i class="fas fa-pencil-alt"></i></a>
+                      <a class="btn btn-danger btn-sm delete" href="{{url('/users/delete_')}}{{$d->id}}"><i class="fas fa-trash"></i></a>
                     </td>
                   </tr>
                   @endforeach
@@ -71,13 +73,15 @@
           </div>
           <!-- /.col -->
         </div> <!-- list row -->
+        @endif
 
-        <div class="row" id="new" style="display:none;">
+        @if($view=='new')
+        <div class="row" id="new">
           <div class="col-12">
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Create User</h3>
-                <button class="btn btn-sm btn-success" style="float:right;" id='showlist'><i class="fas fa-plus"></i> List</button>
+                <a href="{{url('/users/list')}}" class="btn btn-sm btn-success" style="float:right;" id='showlist'><i class="fas fa-plus"></i> List</a>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -158,35 +162,98 @@
           </div>
           <!-- /.col -->
         </div> <!-- add user -->
+        @endif
 
-        <div class="row" id="edit" style="display:none;">
+        @if($view=='edit')
+        <div class="row" id="new">
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">User Edit</h3>
+                <h3 class="card-title">Edit User</h3>
+                <a href="{{url('/users/list')}}" class="btn btn-sm btn-success" style="float:right;" id='showlist'><i class="fas fa-plus"></i> List</a>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <div class="form-group">
-                  <label for="inputName">Name *</label>
-                  <input type="text" id="inputName" class="form-control" value="" required="">
-                </div>
-                <div class="form-group">
-                  <label for="inputEmail">Email *</label>
-                  <input type="text" id="inputEmail" class="form-control" value="" required="">
-                </div>
-                <div class="form-group">
-                  <label for="inputCompany">Company *</label>
-                  <select class="form-control custom-select" required="">
-                    <option selected disabled>Select one</option>
-                    <option>On Hold</option>
-                    <option>Canceled</option>
-                    <option>Success</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <input type="submit" id="submit" class="btn btn-sm btn-primary" value="Update">
-                </div>
+                <form action="/edit_user" name="edit_user" id="edit_user" method="post">
+                  {{ csrf_field() }}
+                    <div class="form-group">
+                      <label for="name">Name *</label>
+                      <input type="text" id="name" name="name" class="form-control" value="{{$data->name}}" autocomplete="off" required="">
+                    </div>
+                    <div class="form-group">
+                      <div class="row">
+                          <div class="col-sm-6">
+                            <label for="email">Email *</label>
+                            <input type="text" id="email" name="email" class="form-control" value="{{$data->email}}" autocomplete="off" required="">
+                          </div>
+                          <div class="col-sm-6">
+                            <label for="mobile">Mobile </label>
+                            <input type="number" id="mobile" name="mobile" class="form-control" value="{{$data->mobile}}" autocomplete="off" required="">
+                          </div>
+                      </div>
+                    </div>
+                      
+                    <div class="form-group">
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <label for="password">Old Password *</label>
+                          <input type="password" id="oldpassword" name="oldpassword" class="form-control" value="" autocomplete="off" placeholder="Leave empty to remail same">
+                        </div>
+                        <div class="col-sm-4">
+                          <label for="password">New Password *</label>
+                          <input type="password" id="password" name="password" class="form-control" value="" autocomplete="off"  placeholder="New Password">
+                        </div>
+                        <div class="col-sm-4">
+                          <label for="conf_password">Confirm Password *</label>
+                          <input type="password" id="conf_password" name="conf_password" class="form-control" value="" autocomplete="off"  placeholder="Confirm Password">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <label for="location">Location </label>
+                          <input type="text" id="location" name="location" class="form-control" value="{{$data->location}}" autocomplete="off" required="">
+                        </div>
+                        <div class="col-sm-6">
+                          <label for="company_id">Company *</label>
+                          <select class="form-control custom-select" id="company_id" name="company_id" required="">
+                            <option selected disabled>Select one</option>
+                            @if(Auth::user()->role_id==1)
+                              @foreach($company as $comp)
+                                @if($data->company_id==$comp->id)
+                                <option value="{{$comp->id}}" selected="selected">{{$comp->company_name}}</option>
+                                @else
+                                <option value="{{$comp->id}}">{{$comp->company_name}}</option>
+                                @endif
+                              @endforeach
+                            @else
+                              @foreach($company as $comp)
+                                @if(Auth::user()->company_id==$comp->id)
+                                  <option value="{{$comp->id}}" selected="selected">{{$comp->company_name}}</option>
+                                @endif
+                              @endforeach
+                            @endif  
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="role_id">Role *</label>
+                      <select class="form-control custom-select" id="role_id" name="role_id" required="">
+                        <option selected disabled>Select Role</option>
+
+                        <option value="2" @if($data->role_id=='2') selected="selected" @endif>Admin</option>
+                        <option value="3" @if($data->role_id=='3') selected="selected" @endif>User</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <input type="hidden" name="id" id="id" value="{{$data->id}}">
+                      <input type="submit" id="submit" class="btn btn-sm btn-success" value="Update">
+                    </div>
+                </form>
               </div>
               <!-- /.card-body -->
             </div>
@@ -194,7 +261,7 @@
           </div>
           <!-- /.col -->
         </div> <!-- edit user -->
-
+        @endif
 
 
         <!-- /.row -->
@@ -207,7 +274,10 @@
 
 
 
-  <script>
+ 
+
+@if($view=='list')  
+<script>
   $(function () {
     $("#example2").DataTable({
       "responsive": true,
@@ -217,73 +287,6 @@
      // "order": [[ 3, "desc" ]],
     });
   });
-
-  $( "#add" ).click(function() {
-    $('#list').slideUp(500);
-    $('#new').slideDown(500);
-  });
-  $(".edit").click(function() {
-    $('#list').slideUp(500);
-    $("#edit").slideDown(500);
-  });
-
-  $("#showlist").click(function() {
-    window.location.reload();
-    $('#new').slideUp(500);
-    $("#edit").slideUp(500);
-    $('#list').slideDown(500);
-  });
-
-  /* attach a submit handler to the form */
-$("#create_user").submit(function(event) {
-
-  /* stop form from submitting normally */
-  event.preventDefault();
-
-  var password = $('#password').val();
-  var conf_password = $('#conf_password').val();
-  if(password!=conf_password){
-      $(document).Toasts('create', {
-        autohide: true,
-        class: 'bg-danger', 
-        title: 'Password Not Matched',
-        subtitle: 'Error',
-        body: 'Password and Confirm Password not matched.'
-      });
-  }
-
-
-  /* get the action attribute from the <form action=""> element */
-  var $form = $(this),
-    url = $form.attr('action');
-
-  /* Send the data using post with element id name and name2*/
-  var posting = $.post(url, {
-    _token:$('input[name=_token]').val(),
-    name: $('#name').val(),
-    email: $('#email').val(),
-    mobile: $('#mobile').val(),
-    location: $('#location').val(),
-    password: $('#password').val(),
-    company_id:$('#company_id').val(),
-    role_id:$('#role_id').val()
-  });
-
-  /* Alerts the results */
-  posting.done(function(data) {
-    $(document).Toasts('create', {
-        autohide: true,
-        class: 'bg-success', 
-        title: 'User created',
-        subtitle: 'Success',
-        body: 'New User Created Successfully.'
-      });
-    $('#create_user').trigger("reset");
-  });
-  posting.fail(function() {
-    $('#result').text('failed');
-  });
-});
 
   /* attach a submit handler to the form */
 $("#csv_upload").submit(function(event) {
@@ -347,14 +350,123 @@ $.ajax({
       }
 });
 
+});
+</script>
+@endif
+
+@if($view=='new')
+<script>
+
+/* attach a submit handler to the form */
+$("#create_user").submit(function(event) {
+
+  /* stop form from submitting normally */
+  event.preventDefault();
+
+  var password = $('#password').val();
+  var conf_password = $('#conf_password').val();
+  if(password!=conf_password){
+      $(document).Toasts('create', {
+        autohide: true,
+        class: 'bg-danger', 
+        title: 'Password Not Matched',
+        subtitle: 'Error',
+        body: 'Password and Confirm Password not matched.'
+      });
+  }
+
+
+  /* get the action attribute from the <form action=""> element */
+  var $form = $(this),
+    url = $form.attr('action');
 
   /* Send the data using post with element id name and name2*/
+  var posting = $.post(url, {
+    _token:$('input[name=_token]').val(),
+    name: $('#name').val(),
+    email: $('#email').val(),
+    mobile: $('#mobile').val(),
+    location: $('#location').val(),
+    password: $('#password').val(),
+    company_id:$('#company_id').val(),
+    role_id:$('#role_id').val()
+  });
 
   /* Alerts the results */
+  posting.done(function(data) {
+    $(document).Toasts('create', {
+        autohide: true,
+        class: 'bg-success', 
+        title: 'User created',
+        subtitle: 'Success',
+        body: 'New User Created Successfully.'
+      });
+    $('#create_user').trigger("reset");
+  });
+  posting.fail(function() {
+    $('#result').text('failed');
+  });
+});
+</script>
+@endif
 
+@if($view=='edit')
+<script>
+
+$("#edit_user").submit(function(event) {
+
+  /* stop form from submitting normally */
+  event.preventDefault();
+
+  var password = $('#password').val();
+  var conf_password = $('#conf_password').val();
+  if(password!=conf_password){
+      $(document).Toasts('create', {
+        autohide: true,
+        class: 'bg-danger', 
+        title: 'Password Not Matched',
+        subtitle: 'Error',
+        body: 'Password and Confirm Password not matched.'
+      });
+  }
+
+
+  /* get the action attribute from the <form action=""> element */
+  var $form = $(this),
+    url = $form.attr('action');
+
+  /* Send the data using post with element id name and name2*/
+  var posting = $.post(url, {
+    _token:$('input[name=_token]').val(),
+    name: $('#name').val(),
+    email: $('#email').val(),
+    mobile: $('#mobile').val(),
+    location: $('#location').val(),
+    password: $('#password').val(),
+    company_id:$('#company_id').val(),
+    role_id:$('#role_id').val(),
+    id:$('#id').val()
+  });
+
+  /* Alerts the results */
+  posting.done(function(data) {
+    $(document).Toasts('create', {
+        autohide: true,
+        class: 'bg-success', 
+        title: 'User Edited',
+        subtitle: 'Success',
+        body: 'User Edited Successfully.'
+      });
+  });
+  posting.fail(function() {
+    $('#result').text('failed');
+  });
 });
 
+
 </script>
+@endif
+
 @endsection
 
 

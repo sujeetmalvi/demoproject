@@ -11,7 +11,7 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          <img src="/dist/img/user-default.png" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
           <a href="/dashboard" class="d-block">{{ucfirst(Auth::user()->name)}}</a>
@@ -94,14 +94,14 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="/users" class="nav-link">
+                <a href="/users/list" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Users</p>
                 </a>
               </li>
               @if(Auth::user()->role_id==1)
               <li class="nav-item">
-                <a href="/company" class="nav-link">
+                <a href="/company/list" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Company</p>
                 </a>

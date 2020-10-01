@@ -27,12 +27,14 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('/dashboard', 'UsersController@dashboard');
 	Route::get('/userslocations', 'UsersController@userslocations');
 
-	Route::get('/users', 'UsersController@users');
+	Route::get('/users/{view}', 'UsersController@users');
 	Route::post('/create_user', 'UsersController@create_user');
+	Route::post('/edit_user', 'UsersController@edit_user');	
 	Route::post('/importCsvUsers', 'UsersController@importCsvUsers');
 
-	Route::get('/company', 'CompanyController@company');
+	Route::get('/company/{view}', 'CompanyController@company');
 	Route::post('/create_company', 'CompanyController@create_company');
+	Route::post('/edit_company', 'CompanyController@edit_company');
 		
 	// REPORTS 
 	Route::get('/rpt_active_cases', 'ReportsController@rpt_active_cases');
@@ -42,6 +44,13 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('/rpt_breaches', 'ReportsController@rpt_breaches');	
 	Route::get('/rpt_usershealth', 'ReportsController@rpt_usershealth');
 	Route::get('/rpt_usersbtdistances', 'ReportsController@rpt_usersbtdistances');
+
+	// EXCEL
+	Route::get('/exl_usersbtdistances', 'ReportsController@exl_usersbtdistances');
+	Route::get('/exl_defaulters', 'ReportsController@exl_defaulters');
+	Route::get('/exl_breaches', 'ReportsController@exl_breaches');	
+	Route::get('/exl_usershealth', 'ReportsController@exl_usershealth');
+
 });
 
 

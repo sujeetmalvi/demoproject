@@ -16,12 +16,13 @@
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
+        @if($view=='list')
         <div class="row" id="list">
           <div class="col-12">
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Companies List </h3>
-                <button class="btn btn-sm btn-success" style="float:right;" id='add'><i class="fas fa-plus"></i> New</button>
+                <a href="{{url('/company/new')}}" class="btn btn-sm btn-success" style="float:right;" id='add'><i class="fas fa-plus"></i> New</a>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -37,8 +38,8 @@
                   <tr>
                     <td>{{$d->company_name}}</td>
                     <td>
-                      <!-- <a class="btn btn-info btn-sm edit" data-id="{{$d->id}}" href="#"><i class="fas fa-pencil-alt"></i></a>
-                      <a class="btn btn-danger btn-sm delete" data-id="{{$d->id}}" href=""><i class="fas fa-trash"></i></a> -->
+                      <a class="btn btn-info btn-sm edit" href="{{url('/company/edit_')}}{{$d->id}}"><i class="fas fa-pencil-alt"></i></a>
+                      <a class="btn btn-danger btn-sm delete" href="{{url('/company/delete_')}}{{$d->id}}"><i class="fas fa-trash"></i></a>
                     </td>
                   </tr>
                   @endforeach
@@ -51,17 +52,19 @@
           </div>
           <!-- /.col -->
         </div> <!-- list row -->
+        @endif
 
-        <div class="row" id="new" style="display:none;">
+        @if($view=='new')
+        <div class="row" id="new">
           <div class="col-12">
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Create User</h3>
-                <button class="btn btn-sm btn-success" style="float:right;" id='showlist'><i class="fas fa-plus"></i> List</button>
+                <a href="{{url('/company/list')}}" class="btn btn-sm btn-success" style="float:right;" id='showlist'><i class="fas fa-plus"></i> List</a>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <form action="/create_company" name="create_company" id="create_company" action="javascript:;" method="post">
+                <form action="/create_company" name="create_company" id="create_company" method="post">
                   {{ csrf_field() }}
                     <div class="form-group">
                       <label for="company_name">Name *</label>
@@ -79,6 +82,38 @@
           </div>
           <!-- /.col -->
         </div> <!-- add user -->
+        @endif
+
+        @if($view=='edit')
+        <div class="row" id="new">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Edit User</h3>
+                <a href="{{url('/company/list')}}" class="btn btn-sm btn-success" style="float:right;" id='showlist'><i class="fas fa-plus"></i> List</a>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <form action="/edit_company" name="edit_company" id="edit_company" method="post">
+                  {{ csrf_field() }}
+                    <div class="form-group">
+                      <label for="company_name">Name *</label>
+                      <input type="text" id="company_name" name="company_name" class="form-control" value="{{$data->company_name}}" autocomplete="off" required="">
+                    </div>
+
+                    <div class="form-group">
+                      <input type="hidden" name="id" id="id" value="{{$data->id}}"> 
+                      <input type="submit" id="submit" class="btn btn-sm btn-success" value="Update">
+                    </div>
+                </form>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div> <!-- add user -->
+        @endif
 
         <!-- /.row -->
       </div>
@@ -89,7 +124,32 @@
   <!-- /.content-wrapper -->
 
 
+<!--       <div class="modal fade" id="modal-sm">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content bg-danger">
+            <div class="modal-header">
+              <h4 class="modal-title">Delete</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Do you want to delete this record ?</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <form action="/user/delete">
+              <button type="button" class="btn btn-primary">Save changes</button>
+              </form>
+            </div>
+          </div>
+          <!-- /.modal-content --
+        </div>
+        <!-- /.modal-dialog --
+      </div>
+      <!-- /.modal --> -->
 
+@if($view=='list')
   <script>
   $(function () {
     $("#example2").DataTable({
@@ -101,23 +161,16 @@
     });
   });
 
+  function delete(id){
 
-  $( "#add" ).click(function() {
-    $('#list').slideUp(500);
-    $('#new').slideDown(500);
-  });
-  // $(".edit").click(function() {
-  //   $('#list').slideUp(500);
-  //   $("#edit").slideDown(500);
-  // });
+  }
 
-  $("#showlist").click(function() {
-    window.location.reload();
-    $('#new').slideUp(500);
-    $("#edit").slideUp(500);
-    $('#list').slideDown(500);
-  });
 
+</script>
+@endif
+
+@if($view=='new')
+<script>
   /* attach a submit handler to the form */
 $("#create_company").submit(function(event) {
 
@@ -149,8 +202,45 @@ $("#create_company").submit(function(event) {
     $('#result').text('failed');
   });
 });
-
 </script>
+@endif
+
+@if($view=='edit')
+<script>
+  /* attach a submit handler to the form */
+$("#edit_company").submit(function(event) {
+
+  /* stop form from submitting normally */
+  event.preventDefault();
+
+  /* get the action attribute from the <form action=""> element */
+  var $form = $(this),
+    url = $form.attr('action');
+
+  /* Send the data using post with element id name and name2*/
+  var posting = $.post(url, {
+    _token:$('input[name=_token]').val(),
+    company_name: $('#company_name').val(),
+    id: $('#id').val()
+  });
+
+  /* Alerts the results */
+  posting.done(function(data) {
+    $(document).Toasts('create', {
+        autohide: true,
+        class: 'bg-success', 
+        title: 'User updated',
+        subtitle: 'Success',
+        body: 'Company Updated Successfully.'
+      });
+    $('#create_company').trigger("reset");
+  });
+  posting.fail(function() {
+    $('#result').text('failed');
+  });
+});
+</script>
+@endif
 @endsection
 
 

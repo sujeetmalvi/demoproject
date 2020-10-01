@@ -53,17 +53,38 @@ class UsersController extends Controller
         return view('dashboard',['data'=>$ddata_arr]);
     }
 
-    public function users(){
+    public function users($view='list'){
+
+      $v = explode('_', $view);
+      $view = (isset($v[0]))?$v[0]:'list';
+      $id  = (isset($v[1]))?$v[1]:0;
+
+      $data = '';
+
+      if($view=='edit'){
+        $data = User::where('id',$id)->first();
+      }
+
+      if($view=='delete'){
+        $data = User::where('id',$id)->delete();
+        return redirect('/users/list');
+      }
+
+
+      if($view=='list'){
         $company_id = Auth::user()->company_id;
         $data = User::join('company','company.id','=','users.company_id')
                 ->select('users.id','users.name','users.email','company.company_name','users.mobile','users.location');
         if(Auth::user()->role_id!=1){
           $data = $data->where('users.company_id',$company_id);
         }
-
         $data = $data->orderby('users.name')->get();
+      }   
+
+
+
         $company = Company::select('id','company_name')->orderby('company_name')->get();
-        return view('users',['data'=>$data,'company'=>$company]);
+        return view('users',['view'=>$view,'data'=>$data,'company'=>$company]);
     }
 
     public function create_user(Request $request){
@@ -88,11 +109,47 @@ class UsersController extends Controller
         ]);        
         if($id){
             
-           // $this->sendEmail('BLE Account Creation', 'http://35.189.78.216/login',$email,$password, $email, $emailFrom = "");
+        // $this->sendEmail('BLE Account Creation', 'http://35.189.78.216/login',$email,$password, $email, $emailFrom = "");
 
             return response()->json(['status'=>true,'message' => 'New User Created Successfully']);
         }else{
             return response()->json(['status'=>false,'message' => 'Error']);
+        }
+    }
+
+    public function edit_user(Request $request){
+
+      try{
+        $name = $request->name;
+        $email = $request->email;
+        $mobile = $request->mobile;
+        $location = $request->location;
+        $password = $request->password;
+        $company_id = $request->company_id;
+        $role_id = $request->role_id;
+        $id = $request->id;
+
+        $updated = User::where('id',$id)->update([
+            'name' => $name,
+            'email' => $email,
+            'mobile' => $mobile,
+            'location' => $location,
+            //'password' => bcrypt($password),
+            'company_id' => $company_id,
+            'role_id' => $role_id,
+            'updated_at'=> now()->setTimezone('UTC')
+        ]); 
+
+        // $this->sendEmail('BLE Account Creation', 'http://35.189.78.216/login',$email,$password, $email, $emailFrom = "");
+
+           return response()->json(['status'=>true,'message' => 'User updated Successfully']);
+
+        }catch(Exception $e){       
+          
+          Log::info($e->getMessage() . '' . $e->getLine());
+            
+          return response()->json(['status'=>false,'message' => $e->getMessage()]);
+        
         }
     }
 
@@ -175,7 +232,8 @@ public function importCsvUsers(Request $request){
                 );
                 User::insertGetId($insertData);
             }
-            $this->sendEmail('BLE Account Creation', 'http://35.189.78.216/login',$importData[1],$importData[2], $importData[1], $emailFrom = "");
+
+            $this->sendEmail('BLE Account Creation', url('/login'),$importData[1],$importData[2], $importData[1], $emailFrom = "");
             $iData++;            
           }
 
