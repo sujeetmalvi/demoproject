@@ -31,7 +31,8 @@ class ReportsController extends Controller
                 ->leftjoin('users as user2','user2.id','=','usersbluetoothtoken.bluetoothtoken')
                 ->where('usersbluetoothtoken.distance','<=',2)
                 ->select('usersbluetoothtoken.bluetoothtoken',
-                    'usersbluetoothtoken.distance','users.name','user2.name as user2name','usersbluetoothtoken.created_at')
+                    'usersbluetoothtoken.distance','users.name','users.email as usersemail',
+                    'user2.name as user2name','user2.email as user2email','usersbluetoothtoken.created_at')
                 ->where('users.company_id',$company_id)
                 ->orderBy('usersbluetoothtoken.created_at', 'DESC')
                 ->get();
@@ -111,7 +112,7 @@ class ReportsController extends Controller
         $company_id = Auth::user()->company_id;
         $data = UsersHealth::leftjoin('users','users.id','=','usershealth.user_id')
                 ->where('users.company_id',$company_id)
-                ->select('users.name','usershealth.created_at','usershealth.condition_type')
+                ->select('users.name','users.email','usershealth.created_at','usershealth.condition_type')
                 ->orderBy('usershealth.created_at', 'DESC')
                 ->get();
         return view('excel_reports.usershealth', ['data'=>$data]);
@@ -137,7 +138,7 @@ class ReportsController extends Controller
         $company_id = Auth::user()->company_id;
         $data = UsersBluetoothToken::leftjoin('users','users.id','=','usersbluetoothtoken.bluetoothtoken')
                 ->where('users.company_id',$company_id)
-                ->select('users.name',\DB::raw('count(usersbluetoothtoken.bluetoothtoken) as voilation'),\DB::raw('date_format(usersbluetoothtoken.created_at,"%d-%m-%Y") as ddate'),\DB::raw('date_format(usersbluetoothtoken.created_at,"%Y-%m-%d") as orderdate'))
+                ->select('users.name','users.email',\DB::raw('count(usersbluetoothtoken.bluetoothtoken) as voilation'),\DB::raw('date_format(usersbluetoothtoken.created_at,"%d-%m-%Y") as ddate'),\DB::raw('date_format(usersbluetoothtoken.created_at,"%Y-%m-%d") as orderdate'))
                 ->orderBy('usersbluetoothtoken.id', 'DESC')
                 ->groupBy(\DB::raw('ddate,usersbluetoothtoken.bluetoothtoken'))
                 ->having('voilation','>','2')
@@ -167,7 +168,7 @@ class ReportsController extends Controller
         $company_id = Auth::user()->company_id;
         $data = UsersBluetoothToken::leftjoin('users','users.id','=','usersbluetoothtoken.bluetoothtoken')
                 ->where('users.company_id',$company_id)
-                ->select('users.name',\DB::raw('count(usersbluetoothtoken.bluetoothtoken) as voilation'))
+                ->select('users.name','users.email',\DB::raw('count(usersbluetoothtoken.bluetoothtoken) as voilation'))
                 ->orderBy('usersbluetoothtoken.id', 'DESC')
                 ->groupBy(\DB::raw('usersbluetoothtoken.bluetoothtoken'))
                 ->get();
@@ -182,7 +183,7 @@ class ReportsController extends Controller
                 ->where('usersbluetoothtoken.distance','<=',2)
                 ->where('usersbluetoothtoken.user_id','=',$user_id)
                 ->where('users.company_id',$company_id)
-                ->select('usersbluetoothtoken.distance','person.name as personname','users.name as user2name','usersbluetoothtoken.created_at')
+                ->select('usersbluetoothtoken.distance','person.name as personname','person.email as personemail','users.name as user2name','users.email as user2email','usersbluetoothtoken.created_at')
                 ->orderBy('usersbluetoothtoken.created_at', 'DESC')
                 ->get();
         return view('excel_reports.1stdegree', ['data'=>$data]);
@@ -202,7 +203,7 @@ class ReportsController extends Controller
                 ->where('usersbluetoothtoken.distance','<=',2)
                 ->where('usersbluetoothtoken.bluetoothtoken','!=',$user_id)
                 ->wherein('usersbluetoothtoken.user_id',[$data_lvl1->users_ids])
-                ->select('usersbluetoothtoken.distance','person.name as personname','users.name as user2name','usersbluetoothtoken.created_at')
+                ->select('usersbluetoothtoken.distance','person.name as personname','person.email as personemail','users.name as user2name','users.email as user2email','usersbluetoothtoken.created_at')
                 ->where('users.company_id',$company_id)
                 ->orderBy('usersbluetoothtoken.created_at', 'DESC')
                 ->get();

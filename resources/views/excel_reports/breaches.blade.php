@@ -8,6 +8,7 @@ header("Content-Disposition: attachment; filename=breaches.xls");
   <thead>
   <tr>
     <th>Name</th>
+    <th>Email</th>
     <th>Voilation count</th>
   </tr>
   </thead>
@@ -15,6 +16,7 @@ header("Content-Disposition: attachment; filename=breaches.xls");
   @foreach($data as $d)
   <tr>
     <td>{{$d->name}}</td>
+    <td>{{$d->email}}</td>
     <td>{{$d->voilation}}</td>
   </tr>
   @endforeach

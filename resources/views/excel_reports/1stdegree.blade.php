@@ -2,15 +2,15 @@
 // The function header by sending raw excel
 header("Content-type: application/vnd-ms-excel");
 // Defines the name of the export file "codelution-export.xls"
-header("Content-Disposition: attachment; filename=usersbtdistances.xls");
+header("Content-Disposition: attachment; filename=1stdegree.xls");
 ?>
 <table border='1'>
   <thead>
   <tr>
-    <th>User Name</th>
-    <th>User Email</th>
-    <th>Near By Person</th>
-    <th>Near By Person (Email)</th>
+      <th>Person</th>
+      <th>Person (Email)</th>
+      <th>Near By Person </th>
+      <th>Near By Person (Email)</th>
     <th>Distance(in Meter)</th>
     <th>Datetime</th>
   </tr>
@@ -18,14 +18,13 @@ header("Content-Disposition: attachment; filename=usersbtdistances.xls");
   <tbody>
 @foreach($data as $d)
   <tr>
-    <td>{{$d->name}}</td>
-    <td>{{$d->usersemail}}</td>
-    <td>{{$d->user2name}}</td>
-    <td>{{$d->user2email}}</td>
+      <td>{{$d->personname}}</td>
+      <td>{{$d->personemail}}</td>
+      <td>{{$d->user2name}}</td>
+      <td>{{$d->user2email}}</td>
     <td>{{$d->distance}}</td>
     <td>{{$d->created_at}}</td>
   </tr>
 @endforeach
   </tbody>
 </table>
-

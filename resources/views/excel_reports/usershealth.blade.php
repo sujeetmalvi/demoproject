@@ -8,6 +8,7 @@ header("Content-Disposition: attachment; filename=usershealth.xls");
   <thead>
     <tr>
       <th>User Name</th>
+      <th>User Email</th>
       <th>Condition Type</th>
       <th>Datetime</th>
     </tr>
@@ -16,6 +17,7 @@ header("Content-Disposition: attachment; filename=usershealth.xls");
   @foreach($data as $d)
     <tr>
       <td>{{$d->name}}</td>
+      <td>{{$d->email}}</td>
       <td>{{Config::get('constants.CONDITION_TYPES.'.$d->condition_type)}}</td>
       <td>{{Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $d->created_at, 'Asia/Kolkata')->format('d-M-Y h:i A')}}</td>
     </tr>
