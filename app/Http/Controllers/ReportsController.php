@@ -64,7 +64,7 @@ class ReportsController extends Controller
     // ->dd();
     // $sql = str_replace_array('?', $data->getBindings(), $data->toSql());
     // return dd($sql);    
-        return view('rpt_1stdegree_endangered', ['data'=>$data]);
+        return view('rpt_1stdegree_endangered', ['data'=>$data,'user_id'=>$user_id]);
     }
 
     public function rpt_2nddegree_endangered($user_id){
@@ -90,7 +90,7 @@ class ReportsController extends Controller
       //             ->dd();
       // $sql = str_replace_array('?', $data->getBindings(), $data->toSql());
       // return dd($sql);   
-        return view('rpt_2nddegree_endangered', ['data'=>$data]);
+        return view('rpt_2nddegree_endangered', ['data'=>$data,'user_id'=>$user_id]);
     }
 
 
@@ -174,6 +174,40 @@ class ReportsController extends Controller
         return view('excel_reports.breaches', ['data'=>$data]);
     }
 
+
+    public function exl_1stdegree($user_id){
+        $company_id = Auth::user()->company_id;
+        $data = UsersBluetoothToken::leftjoin('users','users.id','=','usersbluetoothtoken.bluetoothtoken')
+                ->leftjoin('users as person','person.id','=','usersbluetoothtoken.user_id')
+                ->where('usersbluetoothtoken.distance','<=',2)
+                ->where('usersbluetoothtoken.user_id','=',$user_id)
+                ->where('users.company_id',$company_id)
+                ->select('usersbluetoothtoken.distance','person.name as personname','users.name as user2name','usersbluetoothtoken.created_at')
+                ->orderBy('usersbluetoothtoken.created_at', 'DESC')
+                ->get();
+        return view('excel_reports.1stdegree', ['data'=>$data]);
+    }
+
+    public function exl_2nddegree($user_id){
+        $company_id = Auth::user()->company_id;
+        $data_lvl1 = UsersBluetoothToken::leftjoin('users','users.id','=','usersbluetoothtoken.bluetoothtoken')
+                ->where('usersbluetoothtoken.distance','<=',2)
+                ->where('usersbluetoothtoken.user_id','=',$user_id)
+                ->where('users.company_id',$company_id)
+                ->selectRaw('group_concat(distinct(usersbluetoothtoken.bluetoothtoken)) as users_ids')
+                ->first();
+
+        $data = UsersBluetoothToken::leftjoin('users','users.id','=','usersbluetoothtoken.bluetoothtoken')
+                ->leftjoin('users as person','person.id','=','usersbluetoothtoken.user_id')
+                ->where('usersbluetoothtoken.distance','<=',2)
+                ->where('usersbluetoothtoken.bluetoothtoken','!=',$user_id)
+                ->wherein('usersbluetoothtoken.user_id',[$data_lvl1->users_ids])
+                ->select('usersbluetoothtoken.distance','person.name as personname','users.name as user2name','usersbluetoothtoken.created_at')
+                ->where('users.company_id',$company_id)
+                ->orderBy('usersbluetoothtoken.created_at', 'DESC')
+                ->get();
+        return view('excel_reports.2nddegree', ['data'=>$data]);
+    }
 
     
 }

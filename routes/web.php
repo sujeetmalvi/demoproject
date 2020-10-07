@@ -50,6 +50,8 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('/exl_defaulters', 'ReportsController@exl_defaulters');
 	Route::get('/exl_breaches', 'ReportsController@exl_breaches');	
 	Route::get('/exl_usershealth', 'ReportsController@exl_usershealth');
+	Route::get('/exl_1stdegree/{userid}', 'ReportsController@exl_1stdegree');
+	Route::get('/exl_2nddegree/{userid}', 'ReportsController@exl_2nddegree');
 
 });
 
