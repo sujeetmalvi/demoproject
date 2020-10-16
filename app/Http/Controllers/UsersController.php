@@ -109,7 +109,7 @@ class UsersController extends Controller
             'created_at'=> now()->setTimezone('UTC')
         ]);        
   
-          $this->sendEmail('BLE Account Creation', url('/login'),$email,$password, $email, $emailFrom = "");
+          $this->sendEmail('Your Superfence account has been created', url('/login'),$email,$password, $email, $emailFrom = "");
 
           return response()->json(['status'=>true,'message' => 'New User Created Successfully']);
 

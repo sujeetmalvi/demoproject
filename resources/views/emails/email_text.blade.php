@@ -1,7 +1,7 @@
 
     <!--container start-->
     <div style="font-size: 15px; color:#333; padding:10px 32px 20px 32px;">
-      Dear User, Your account has been created successfully. Please click on below link and login.
+      Dear User, <br> Thank you for registering with Superfence. Please find your login details below.
       <br>
       <b>Login Url : </b>{{$login_url}}
       <br>
